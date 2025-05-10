@@ -1,10 +1,3 @@
-//
-//  tets.swift
-//  ImageCarousel
-//
-//  Created by RAJEEV MAHAJAN on 10/05/25.
-//
-
 import SwiftUI
 
 struct ImageCarouselView2: View {
@@ -18,8 +11,11 @@ struct ImageCarouselView2: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             let itemSize = min(screenWidth * 0.7, screenHeight * 0.8)
-            let spacing: CGFloat = -itemSize * 0.3  // controls overlap
-            let itemSpacing = itemSize + spacing
+            
+            let maxOverlap: CGFloat = itemSize * 0.2
+            let scrollProgress = (dragOffset / itemSize).clamped(to: -0.41...0.41)
+            let dynamicSpacing = -maxOverlap * (1.0 - abs(scrollProgress))
+            let itemSpacing = itemSize + dynamicSpacing
             
             VStack(spacing: 8) {
                 ZStack {
@@ -70,6 +66,12 @@ struct ImageCarouselView2: View {
             }
             .frame(width: screenWidth, height: screenHeight, alignment: .center)
         }
+    }
+}
+
+extension Comparable {
+    func clamped(to limits: ClosedRange<Self>) -> Self {
+        return min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
 
