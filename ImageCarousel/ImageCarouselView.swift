@@ -38,7 +38,6 @@ struct ImageCarouselView: View {
                                 .frame(width: itemSize, height: itemSize)
                                 .clipped()
                                 .cornerRadius(16)
-                                .shadow(radius: 5)
                         }
                         .id(index)
                         .zIndex(currentIndex == index ? 1 : 0) // center image visually above others

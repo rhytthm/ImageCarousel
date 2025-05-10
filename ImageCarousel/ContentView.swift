@@ -22,8 +22,11 @@ struct ContentView: View {
             }
             .padding(.top, 60)
             
-            ImageCarouselView(imageArr: ["image1", "image2", "image3","image1", "image2", "image3"])
-                .frame(height: 290)
+//            ImageCarouselView(imageArr: ["image1", "image2", "image3","image1", "image2", "image3"])
+//                .frame(height: 300)
+//                .padding(.top, 50)
+            ImageCarouselView2(imageArr: ["image1", "image2", "image3","image1", "image2", "image3"])
+                .frame(height: 300)
                 .padding(.top, 50)
             
             Spacer()
