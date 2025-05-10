@@ -22,9 +22,13 @@ struct ContentView: View {
             }
             .padding(.top, 60)
             
+            ImageCarouselView(imageArr: ["image1", "image2", "image3","image1", "image2", "image3"])
+                .frame(height: 290)
+                .padding(.top, 50)
+            
+            Spacer()
+            
             VStack {
-                ImageCarouselView(imageArr: ["image1", "image2", "image3"])
-                
                 Text("Get Visas")
                     .font(.title)
                     .fontWeight(.bold)
