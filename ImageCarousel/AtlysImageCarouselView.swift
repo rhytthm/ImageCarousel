@@ -1,10 +1,12 @@
 import SwiftUI
 
-struct ImageCarouselView2: View {
+struct AtlysImageCarouselView: View {
     var imageArr: [String]
     
     @State private var currentIndex: Int = 0
     @GestureState private var dragOffset: CGFloat = 0.0
+    
+    let maxScaleDrop: CGFloat = 0.3
     
     var body: some View {
         GeometryReader { geometry in
@@ -12,20 +14,20 @@ struct ImageCarouselView2: View {
             let screenHeight = geometry.size.height
             let itemSize = min(screenWidth * 0.7, screenHeight * 0.8)
             
-            let maxOverlap: CGFloat = itemSize * 0.2
-            let scrollProgress = (dragOffset / itemSize).clamped(to: -0.41...0.41)
-            let dynamicSpacing = -maxOverlap * (1.0 - abs(scrollProgress))
-            let itemSpacing = itemSize + dynamicSpacing
+            // This ensures no overlap at mid-swipe:
+            let overlapFactor = maxScaleDrop * 0.5
+            let overlap = itemSize * overlapFactor
+            let itemSpacing = itemSize - overlap
             
-            VStack(spacing: 8) {
+            VStack(spacing: 0) {
                 ZStack {
                     ForEach(imageArr.indices, id: \.self) { index in
                         let relativeOffset = CGFloat(index - currentIndex)
                         let offsetFromCenter = relativeOffset * itemSpacing + dragOffset
-                        let distanceFactor = abs(offsetFromCenter / screenWidth)
-                        let scale = 1.0 - min(distanceFactor * 0.4, 0.4) // scale ranges from 1.0 to 0.6
                         
-                        // Ensure center image has highest zIndex
+                        // Use itemSpacing instead of screenWidth for consistency
+                        let distanceFactor = abs(offsetFromCenter / itemSpacing)
+                        let scale = 1.0 - min(distanceFactor * maxScaleDrop, maxScaleDrop)
                         let zIndex = 100 - abs(offsetFromCenter)
                         
                         Image(imageArr[index])
@@ -38,7 +40,6 @@ struct ImageCarouselView2: View {
                             .offset(x: offsetFromCenter)
                             .zIndex(zIndex)
                             .animation(.easeOut(duration: 0.25), value: dragOffset)
-                            .animation(.easeOut(duration: 0.25), value: currentIndex)
                     }
                 }
                 .frame(width: screenWidth, height: itemSize)
@@ -54,7 +55,6 @@ struct ImageCarouselView2: View {
                         }
                 )
                 
-                // Page Indicator
                 HStack(spacing: 8) {
                     ForEach(imageArr.indices, id: \.self) { index in
                         Circle()
@@ -64,19 +64,13 @@ struct ImageCarouselView2: View {
                 }
                 .frame(height: screenHeight * 0.1)
             }
-            .frame(width: screenWidth, height: screenHeight, alignment: .center)
+            .frame(width: screenWidth, height: screenHeight)
         }
     }
 }
 
-extension Comparable {
-    func clamped(to limits: ClosedRange<Self>) -> Self {
-        return min(max(self, limits.lowerBound), limits.upperBound)
-    }
-}
-
 #Preview {
-    ImageCarouselView2(imageArr: ["image1", "image2", "image3"])
-        .frame(height: 300)
+    AtlysImageCarouselView(imageArr: ["image1", "image2", "image3"])
+        .frame(height: 280)
         .padding()
 }
